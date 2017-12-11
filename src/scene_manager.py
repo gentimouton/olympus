@@ -1,6 +1,6 @@
-from scene import SCN_1, SCN_2
-from scene_1 import Scene1
-from scene_2 import Scene2
+from scene import SCN_MENU, SCN_GAME, SCN_QUIT
+from menu_scene import MenuScene
+from game_scene import GameScene
 
 
 class SceneManager():
@@ -11,10 +11,13 @@ class SceneManager():
     def tick(self, ms):
         """ update current scene """
         next_scene_id, kwargs = self.cur_scene.tick(ms)
-        if next_scene_id:
+        if next_scene_id == SCN_QUIT: # quit via dummy scene constant
+            return True
+        elif next_scene_id is not None: # change scene
             self.cur_scene.pause()
             self.cur_scene = self.scenes[next_scene_id]
             self.cur_scene.reset_resume(**kwargs)
 
 
-scene_manager = SceneManager({ SCN_1: Scene1(), SCN_2: Scene2() }, SCN_1)
+scene_manager = SceneManager({ SCN_MENU: MenuScene(), SCN_GAME: GameScene() },
+                             SCN_MENU)
