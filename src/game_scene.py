@@ -6,13 +6,17 @@ from pview import T
 
 
 class GameScene(Scene):
-    
+    """ Centerpiece of the game """
+        
     def tick(self, ms):
         if controller.btn_event('select'):
             return SCN_MENU, {}
         
         self._render()
         return None, {}
+    
+    def refresh_view(self):
+        pass # no need to do anything until using dirty sprites
     
     def _render(self):
         pview.fill((100, 0, 100))

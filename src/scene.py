@@ -11,4 +11,5 @@ class Scene():
         pass
     def reset_resume(self, **kwargs):
         pass
-    
+    def refresh_view(self):
+        pass # redraw from scratch when switching from/to fullscreen
