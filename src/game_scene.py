@@ -10,8 +10,11 @@ class GameScene(Scene):
     """ Centerpiece of the game """
         
     def __init__(self):
+        # model
         self.mana = 10
         self.mana_max = 100
+        # gfx
+#           self._sprites = pg.sprite.LayeredDirty()
         
     def tick(self, ms):
         if controller.btn_event('select'):
@@ -38,15 +41,16 @@ class GameScene(Scene):
         pview.fill((222, 111, 222), T(200, 5, d, 15))  # gauge full
         ptext.draw('Mana', midright=T(200 - 5, 5 + 15 // 2),
                    fontsize=T(20), color=(222, 222, 222))
-        # card contours
-        pview.fill((111, 111, 55), T(50 - 1, 150 - 1, 200 + 2, 300 + 2))
-        pview.fill((111, 111, 55), T(300 - 1, 150 - 1, 200 + 2, 300 + 2))
-        pview.fill((111, 111, 55), T(550 - 1, 150 - 1, 200 + 2, 300 + 2))
-        # cards
-        pview.fill((55, 55, 111), T(50, 150, 200, 300))
-        pview.fill((55, 55, 55), T(300, 150, 200, 300))
-        pview.fill((111, 55, 55), T(550, 150, 200, 300))
+        draw_card((50, 150, 200, 300), (55, 55, 111))
+        draw_card((300, 150, 200, 300), (55, 55, 55))
+        draw_card((550, 150, 200, 300), (111, 55, 55))
         
+        
+def draw_card(rect, color):
+    # TODO: move this into Card()
+    x, y, w, h = rect
+    pview.fill((111, 111, 55), T(x - 1, y - 1, w + 2, h + 2))  # contour
+    pview.fill(color, T(rect))
         
 
 class Card():
@@ -61,9 +65,20 @@ if __name__ == "__main__":
     pview.set_mode((800, 600))
     clock = pg.time.Clock()
     s = GameScene()
-    while not any(event.type in (pg.KEYDOWN, pg.QUIT) for event in pg.event.get()):
-        ms = clock.tick(30)        
+    done = False
+    while not done:
+        for event in pg.event.get():
+            if event.type == pg.QUIT:
+                done = True
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_ESCAPE:
+                    done = True
+                elif event.key == pg.K_F11:
+                    pview.toggle_fullscreen()
+                    s.refresh_view()
+        ms = clock.tick(30)
         scene_id, kwargs = s.tick(ms)
-        ptext.draw('test screen - press any key to exit', topright=T(790, 10),
+        ptext.draw('ESC: exit\nF11: full', topright=T(790, 10),
                    fontsize=T(30), color='red', background='white')
         pg.display.flip()  # render
+        
