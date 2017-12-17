@@ -26,6 +26,8 @@ class SceneManager():
         self.cur_scene.refresh_view()
 
 def init():
+    """ needed because Scenes need pygame to be initialized 
+    before they are created """
     global scene_manager
     scene_manager = SceneManager({ SCN_MENU: MenuScene(), SCN_GAME: GameScene() },
                              SCN_MENU)

@@ -26,8 +26,6 @@ def main():
         outcome = sm.scene_manager.tick(ms) # update scene 
         if outcome == OUT_QUIT:
             break
-        
-        pg.display.flip()  # render
 
 if __name__ == "__main__":
     main()

@@ -36,15 +36,16 @@ class MenuScene(Scene):
                    fontsize=T(70), color='black')
         ptext.draw('F11: toggle fullscreen\nEsc: quit', T(10, 10),
             fontsize=T(20), color='black')
+        pg.display.flip()
+        
 
 if __name__ == "__main__":
+    from settings import FPS
     pg.init()
     pview.set_mode((800, 600))
     clock = pg.time.Clock()
     s = MenuScene()
-    while not any(event.type in (pg.KEYDOWN, pg.QUIT) for event in pg.event.get()):
-        ms = clock.tick(30)        
+    while not pg.event.peek([pg.QUIT, pg.KEYDOWN]):
+        ms = clock.tick(FPS)        
         scene_id, kwargs = s.tick(ms)
-        ptext.draw('test screen - press any key to exit', topright=T(790, 10),
-                   fontsize=T(30), color='red', background='white')
-        pg.display.flip()  # render
+        

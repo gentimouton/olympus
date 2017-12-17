@@ -1,4 +1,9 @@
+""" The game scene has a HUD with gauges and a series of encounters. 
+Player makes decisions during encounters, affecting gauges. 
+Game is over when certain gauges reach certain states.
+"""
 from controls import controller
+from encounter import Encounter
 import ptext
 from pview import T
 import pview
@@ -6,9 +11,7 @@ import pygame as pg
 from scene import SCN_MENU, Scene
 
 
-class GameScene(Scene):
-    """ Centerpiece of the game """
-        
+class GameScene(Scene):        
     def __init__(self):
         # model
         self.mana = 10
@@ -37,6 +40,7 @@ class GameScene(Scene):
         dirty_rects = self.card_sprites.draw(pview.screen, self.bg)
         pg.display.update(dirty_rects)
         draw_hud(self.mana, self.mana_max)
+        pg.display.flip()
         
 
 def _make_bg():
@@ -67,39 +71,8 @@ def draw_hud(v, vmax):
                fontsize=T(20), color=(222, 222, 222))
         
 
-class Encounter():
-    def __init__(self, spr_grp):
-        self.txt = 'what do you do?'
-        self.opt1 = 'a'
-        self.opt2 = 'b'
-        self.mid_card = Card((300, 150, 200, 300), (55, 55, 55), self.txt)
-        self.left_card = Card((50, 150, 200, 300), (55, 55, 111), self.opt1)
-        self.right_card = Card((550, 150, 200, 300), (111, 55, 55), self.opt2)
-        spr_grp.add(self.mid_card, self.left_card, self.right_card)
-        
-        
-        
-class Card(pg.sprite.DirtySprite):
-    def __init__(self, rect, color, txt):
-        pg.sprite.DirtySprite.__init__(self)
-        self.rect0 = rect
-        self.color = color
-        self.txt = txt
-        self.refresh()
-    
-    def refresh(self):
-        x, y, w, h = self.rect0
-        inner_rect = (1, 1, T(w), T(h))
-        self.rect = pg.Rect(T(x) - 1, T(y) - 1, T(w) + 2, T(h) + 2)
-        surf = pg.Surface((T(w) + 2, T(h) + 2))
-        surf.fill((111, 111, 55))
-        surf.fill(self.color, inner_rect)
-        surf.convert()
-        self.image = surf
-        self.dirty = 1
-        
-
 if __name__ == "__main__":
+    from settings import FPS
     pg.init()
     pview.set_mode((800, 600))
     clock = pg.time.Clock()
@@ -115,9 +88,6 @@ if __name__ == "__main__":
                 elif event.key == pg.K_F11:
                     pview.toggle_fullscreen()
                     s.refresh_view()
-        ms = clock.tick(30)
+        ms = clock.tick(FPS)
         scene_id, kwargs = s.tick(ms)
-        ptext.draw('ESC: exit\nF11: full', topright=T(790, 10),
-                   fontsize=T(30), color='red', background='white')
-        pg.display.flip()  # render
-        
+        pg.display.set_caption('game scene %.1f' % clock.get_fps())

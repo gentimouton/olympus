@@ -1,6 +1,6 @@
 import pygame as pg
 
-FPS = 60
+FPS = 30
 DEBUG = True
 
 # map button to keys
