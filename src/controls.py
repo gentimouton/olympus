@@ -1,4 +1,3 @@
-import pview
 import pygame as pg
 import settings
 from constants import OUT_FSCR, OUT_NONE, OUT_QUIT
@@ -33,7 +32,6 @@ class Controller():
                 elif event.key in valid_keys:
                     self._bdown_events.add(kmap[event.key])
                 elif event.key == pg.K_F11:
-                    pview.toggle_fullscreen()
                     return OUT_FSCR
         return OUT_NONE
     

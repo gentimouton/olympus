@@ -14,7 +14,8 @@ class GameScene(Scene):
         self.mana = 10
         self.mana_max = 100
         # gfx
-        self.card_sprites = pg.sprite.Group()
+        self.bg = _make_bg()
+        self.card_sprites = pg.sprite.LayeredDirty()
         self.encounters = [Encounter(self.card_sprites)]
         
     def tick(self, ms):
@@ -23,14 +24,27 @@ class GameScene(Scene):
         self._render()
         return None, {}
     
+    def reset_resume(self):
+        self.refresh_view()
+        
     def refresh_view(self):
+        self.bg = _make_bg()
+        pview.screen.blit(self.bg, (0, 0))
         for spr in self.card_sprites:
             spr.refresh()
-    
+        
     def _render(self):
-        pview.fill((22, 55, 55))  # bg
+        dirty_rects = self.card_sprites.draw(pview.screen, self.bg)
+        pg.display.update(dirty_rects)
         draw_hud(self.mana, self.mana_max)
-        self.card_sprites.draw(pview.screen)
+        
+
+def _make_bg():
+    """ return surface """
+    surf = pg.Surface(pview.size)
+    surf.fill((11, 44, 44))
+    surf.convert()
+    return surf
         
 def draw_hud(v, vmax):
     """ draw top bar and gauges """
@@ -65,9 +79,9 @@ class Encounter():
         
         
         
-class Card(pg.sprite.Sprite):
+class Card(pg.sprite.DirtySprite):
     def __init__(self, rect, color, txt):
-        pg.sprite.Sprite.__init__(self)
+        pg.sprite.DirtySprite.__init__(self)
         self.rect0 = rect
         self.color = color
         self.txt = txt
@@ -76,12 +90,13 @@ class Card(pg.sprite.Sprite):
     def refresh(self):
         x, y, w, h = self.rect0
         inner_rect = (1, 1, T(w), T(h))
-        self.rect = T(x) - 1, T(y) - 1, T(w) + 2, T(h) + 2
+        self.rect = pg.Rect(T(x) - 1, T(y) - 1, T(w) + 2, T(h) + 2)
         surf = pg.Surface((T(w) + 2, T(h) + 2))
         surf.fill((111, 111, 55))
         surf.fill(self.color, inner_rect)
         surf.convert()
         self.image = surf
+        self.dirty = 1
         
 
 if __name__ == "__main__":

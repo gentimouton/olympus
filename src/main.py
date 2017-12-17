@@ -20,6 +20,7 @@ def main():
         if outcome == OUT_QUIT:
             break
         elif outcome == OUT_FSCR:
+            pview.toggle_fullscreen()
             sm.scene_manager.refresh_view()
 
         outcome = sm.scene_manager.tick(ms) # update scene 
