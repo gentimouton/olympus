@@ -12,6 +12,7 @@ SCREENSHOT_TEMPLATE = "screenshot-%Y%m%d%H%M%S.png"
 screen = None
 size0 = None
 size = None
+f = 1 # ratio between current resolution and base resolution
 w = None
 h = None
 w0 = None

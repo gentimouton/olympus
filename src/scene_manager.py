@@ -3,6 +3,7 @@ from game_scene import GameScene
 from menu_scene import MenuScene
 from scene import SCN_MENU, SCN_GAME, SCN_QUIT
 
+scene_manager = None
 
 class SceneManager():
     def __init__(self, scenes, first_scene_id):
@@ -24,5 +25,7 @@ class SceneManager():
         """ controls switched to full screen, so redraw scene from scratch """
         self.cur_scene.refresh_view()
 
-scene_manager = SceneManager({ SCN_MENU: MenuScene(), SCN_GAME: GameScene() },
+def init():
+    global scene_manager
+    scene_manager = SceneManager({ SCN_MENU: MenuScene(), SCN_GAME: GameScene() },
                              SCN_MENU)

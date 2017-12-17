@@ -2,7 +2,7 @@ from constants import OUT_FSCR, OUT_QUIT
 from controls import controller
 import pview
 import pygame as pg
-from scene_manager import scene_manager
+import scene_manager as sm
 import settings
 
 
@@ -11,6 +11,7 @@ def main():
     pg.display.set_caption('Olympus')
     pview.set_mode((800, 600))
     clock = pg.time.Clock()
+    sm.init()
     
     while True:
         ms = clock.tick(settings.FPS) # throttle
@@ -18,10 +19,10 @@ def main():
         outcome = controller.poll() # get player input
         if outcome == OUT_QUIT:
             break
+        elif outcome == OUT_FSCR:
+            sm.scene_manager.refresh_view()
 
-        outcome = scene_manager.tick(ms) # update scene 
-        if outcome == OUT_FSCR:
-            scene_manager.refresh_view()
+        outcome = sm.scene_manager.tick(ms) # update scene 
         if outcome == OUT_QUIT:
             break
         
