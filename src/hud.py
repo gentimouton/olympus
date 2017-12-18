@@ -13,6 +13,10 @@ class Hud():
         self.gauge = Gauge(v, vmax, (100, 5, 20, 70))
         self.icon = ManaIcon((100 + 2, 80, 16, 16))
         spr_grp.add(self.gauge, self.icon)
+        
+    def update(self):
+        v, vmax = self.state['mana']['v'], self.state['mana']['vmax']
+        self.gauge.set(v, vmax)
 
 class ManaIcon(pg.sprite.DirtySprite):
     """ static icon. Square with a hole in the middle. """
@@ -20,6 +24,7 @@ class ManaIcon(pg.sprite.DirtySprite):
         pg.sprite.DirtySprite.__init__(self)
         self.rect0 = rect0
         self.refresh()
+        
     def refresh(self):
         x, y, w, h = self.rect0
         self.rect = pg.Rect(T(x), T(y), T(w), T(h))
@@ -40,6 +45,11 @@ class Gauge(pg.sprite.DirtySprite):
         self.rect0 = rect0
         self.color = color
         self.bgcol = bgcolor
+        self.refresh()
+        
+    def set(self, v, vmax):
+        self.v = v
+        self.vmax = vmax
         self.refresh()
         
     def refresh(self):
