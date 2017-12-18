@@ -15,7 +15,6 @@ class Encounter():
         spr_grp.add(self.mid_card, self.left_card, self.right_card)
         
         
-        
 class Card(pg.sprite.DirtySprite):
     def __init__(self, rect, color, txt):
         pg.sprite.DirtySprite.__init__(self)
@@ -27,8 +26,8 @@ class Card(pg.sprite.DirtySprite):
     def refresh(self):
         """ recompute image and rect. Called when screen resolution changed. """
         x, y, w, h = self.rect0
-        inner_rect = (1, 1, T(w), T(h))
         self.rect = pg.Rect(T(x) - 1, T(y) - 1, T(w) + 2, T(h) + 2)
+        inner_rect = (1, 1, T(w), T(h))
         surf = pg.Surface((T(w) + 2, T(h) + 2))
         surf.fill((111, 111, 55))
         surf.fill(self.color, inner_rect)

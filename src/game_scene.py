@@ -4,8 +4,8 @@ Game is over when certain gauges reach certain states.
 """
 from controls import controller
 from encounter import Encounter
-import ptext
-from pview import T
+from game_bg import make_bg
+from hud import Hud
 import pview
 import pygame as pg
 from scene import SCN_MENU, Scene
@@ -14,14 +14,13 @@ from scene import SCN_MENU, Scene
 class GameScene(Scene):        
     def __init__(self):
         # model
-        self.mana = 10
-        self.mana_max = 100
+        self.state = {'mana': {'v': 10, 'vmax': 100} }  # can save this via pickle 
         # gfx
-        self.bg = _make_bg()
+        self.bg = make_bg()
         self.sprites = pg.sprite.LayeredDirty()
-        self.encounters = [Encounter(self.sprites)]
-        self.mana_gauge_v = Gauge(self.mana, self.mana_max, (100, 5, 20, 70)) 
-        self.sprites.add(self.mana_gauge_v)
+        self.encounters = [Encounter(self.sprites)]  # TODO: add those to state
+        self.hud = Hud(self.sprites, self.state)
+
         
     def tick(self, ms):
         if controller.btn_event('select'):
@@ -33,7 +32,7 @@ class GameScene(Scene):
         self.refresh_view()
         
     def refresh_view(self):
-        self.bg = _make_bg()
+        self.bg = make_bg()
         pview.screen.blit(self.bg, (0, 0))
         for spr in self.sprites:
             spr.refresh()
@@ -42,73 +41,9 @@ class GameScene(Scene):
     def _render(self):
         dirty_rects = self.sprites.draw(pview.screen, self.bg)
         pg.display.update(dirty_rects)
-#         draw_hud(self.mana, self.mana_max)
-        
         
 
-def _make_bg():
-    """ return surface """
-    surf = pg.Surface(pview.size)
-    surf.fill((11, 44, 44))
-    surf.fill((33, 66, 66), T(0, 0, 800, 100))
-    surf.convert()
-    return surf
 
-
-class Gauge(pg.sprite.DirtySprite):
-    def __init__(self, v, vmax, rect0, color=(222, 22, 22), bgcolor=(0, 0, 0)):
-        pg.sprite.DirtySprite.__init__(self)
-        self.name = 'Mana'
-        self.v = v
-        self.vmax = vmax
-        self.rect0 = rect0
-        self.color = color
-        self.bgcol = bgcolor
-        self.refresh()
-    
-    def set(self, v, vmax):
-        self.v = v
-        self.vmax = vmax
-        self.refresh()
-                
-    def refresh(self):
-        b = 2  # border thickness
-        x, y, w, h = self.rect0
-        self.rect = pg.Rect((T(x) - b, T(y) - b, T(w) + 2 * b, T(h) + 2 * b))
-        surf = pg.Surface((self.rect.w, self.rect.h))
-        surf.fill(self.bgcol)  # empty part
-        if self.v > 0:  # full part
-            fh = h * self.v // self.vmax  # full part height  
-            inner_rect = pg.Rect(b, T(h - fh) + b, T(w), T(fh))
-            surf.fill(self.color, inner_rect)
-        surf.convert()
-        self.image = surf
-        self.dirty = 1
-        # TODO: draw 'Mana' below
-#         ptext.draw('Mana', midtop=(T(x + w // 2), T(h + y) + b),
-#                    fontsize=T(20), color=(222, 222, 222))
-
-        
-def draw_hud(v, vmax):
-    """ draw top bar and gauges """
-    
-    b = 1  # border thickness
-    # draw vertical gauge
-    x, y, w, h = 100, 5, 20, 70
-    vcol = 222, 111, 222
-    bgcol = 55, 55, 55
-    pview.fill(bgcol, (T(x) - b, T(y) - b, T(w) + 2 * b, T(h) + 2 * b))  # empty
-    d = h * v // vmax
-    pview.fill(vcol, (T(x), T(y + h - d), T(w), T(d)))  # gauge full
-    ptext.draw('Mana', midtop=(T(x + w // 2), T(h + y) + b),
-               fontsize=T(20), color=(222, 222, 222))
-    # draw horizontal gauge
-    d = 200 * v // vmax
-    pview.fill((0, 0, 0), T(200 - 1, 5 - 1, 200 + 2, 15 + 2))  # gauge empty
-    pview.fill((222, 111, 222), T(200, 5, d, 15))  # gauge full
-    ptext.draw('Mana', midright=T(200 - 5, 5 + 15 // 2),
-               fontsize=T(20), color=(222, 222, 222))
-        
 
 if __name__ == "__main__":
     from settings import FPS
