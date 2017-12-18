@@ -25,6 +25,7 @@ class Card(pg.sprite.DirtySprite):
         self.refresh()
     
     def refresh(self):
+        """ recompute image and rect. Called when screen resolution changed. """
         x, y, w, h = self.rect0
         inner_rect = (1, 1, T(w), T(h))
         self.rect = pg.Rect(T(x) - 1, T(y) - 1, T(w) + 2, T(h) + 2)

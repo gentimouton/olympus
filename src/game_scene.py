@@ -18,8 +18,10 @@ class GameScene(Scene):
         self.mana_max = 100
         # gfx
         self.bg = _make_bg()
-        self.card_sprites = pg.sprite.LayeredDirty()
-        self.encounters = [Encounter(self.card_sprites)]
+        self.sprites = pg.sprite.LayeredDirty()
+        self.encounters = [Encounter(self.sprites)]
+        self.mana_gauge_v = Gauge(self.mana, self.mana_max, (100, 5, 20, 70)) 
+        self.sprites.add(self.mana_gauge_v)
         
     def tick(self, ms):
         if controller.btn_event('select'):
@@ -33,26 +35,63 @@ class GameScene(Scene):
     def refresh_view(self):
         self.bg = _make_bg()
         pview.screen.blit(self.bg, (0, 0))
-        for spr in self.card_sprites:
+        for spr in self.sprites:
             spr.refresh()
+        pg.display.update()  # needed to blit the bg everywhere
         
     def _render(self):
-        dirty_rects = self.card_sprites.draw(pview.screen, self.bg)
+        dirty_rects = self.sprites.draw(pview.screen, self.bg)
         pg.display.update(dirty_rects)
-        draw_hud(self.mana, self.mana_max)
-        pg.display.flip()
+#         draw_hud(self.mana, self.mana_max)
+        
         
 
 def _make_bg():
     """ return surface """
     surf = pg.Surface(pview.size)
     surf.fill((11, 44, 44))
+    surf.fill((33, 66, 66), T(0, 0, 800, 100))
     surf.convert()
     return surf
+
+
+class Gauge(pg.sprite.DirtySprite):
+    def __init__(self, v, vmax, rect0, color=(222, 22, 22), bgcolor=(0, 0, 0)):
+        pg.sprite.DirtySprite.__init__(self)
+        self.name = 'Mana'
+        self.v = v
+        self.vmax = vmax
+        self.rect0 = rect0
+        self.color = color
+        self.bgcol = bgcolor
+        self.refresh()
+    
+    def set(self, v, vmax):
+        self.v = v
+        self.vmax = vmax
+        self.refresh()
+                
+    def refresh(self):
+        b = 2  # border thickness
+        x, y, w, h = self.rect0
+        self.rect = pg.Rect((T(x) - b, T(y) - b, T(w) + 2 * b, T(h) + 2 * b))
+        surf = pg.Surface((self.rect.w, self.rect.h))
+        surf.fill(self.bgcol)  # empty part
+        if self.v > 0:  # full part
+            fh = h * self.v // self.vmax  # full part height  
+            inner_rect = pg.Rect(b, T(h - fh) + b, T(w), T(fh))
+            surf.fill(self.color, inner_rect)
+        surf.convert()
+        self.image = surf
+        self.dirty = 1
+        # TODO: draw 'Mana' below
+#         ptext.draw('Mana', midtop=(T(x + w // 2), T(h + y) + b),
+#                    fontsize=T(20), color=(222, 222, 222))
+
         
 def draw_hud(v, vmax):
     """ draw top bar and gauges """
-    pview.fill((33, 66, 66), T(0, 0, 800, 100))
+    
     b = 1  # border thickness
     # draw vertical gauge
     x, y, w, h = 100, 5, 20, 70
