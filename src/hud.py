@@ -9,13 +9,13 @@ class Hud():
     def __init__(self, spr_grp, state):
         # TODO: pass a rect saying where the HUD lives
         self.state = state
-        v, vmax = state['mana']['v'], state['mana']['vmax']
+        v, vmax = state.mana, state.mana_max
         self.gauge = Gauge(v, vmax, (100, 5, 20, 70))
         self.icon = ManaIcon((100 + 2, 80, 16, 16))
         spr_grp.add(self.gauge, self.icon)
         
     def update(self):
-        v, vmax = self.state['mana']['v'], self.state['mana']['vmax']
+        v, vmax = self.state.mana, self.state.mana_max
         self.gauge.set(v, vmax)
 
 class ManaIcon(pg.sprite.DirtySprite):

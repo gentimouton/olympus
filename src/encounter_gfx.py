@@ -1,27 +1,23 @@
 """ An encounter is a situation (text, image) and choices with consequences. """
+from game_model import encounter_data
 import ptext
 from pview import T
 import pygame as pg
 from utils import random_color
 
 
-class Encounter():
-    def __init__(self, spr_grp):
+class EncounterGfx():
+    def __init__(self, enc_kind, spr_grp):
         """ spr_grp is the current scene's sprite group """
-        self.txt = 'what do you do?'
-        self.opt1 = '+20 mana'
-        self.opt2 = 'nothing'
-        self.mid_card = Card((300, 150, 200, 300), random_color(), self.txt)
-        self.left_card = Card((50, 150, 200, 300), random_color(), self.opt1)
-        self.right_card = Card((550, 150, 200, 300), random_color(), self.opt2)
+        self.data = encounter_data[enc_kind]
+        txt = self.data['txt']
+        self.mid_card = Card((300, 150, 200, 300), random_color(), txt)
+        txt = self.data['left']['txt']
+        self.left_card = Card((50, 150, 200, 300), random_color(), txt)
+        txt = self.data['right']['txt']
+        self.right_card = Card((550, 150, 200, 300), random_color(), txt)
         spr_grp.add(self.mid_card, self.left_card, self.right_card)
     
-    def choose_left(self, state):
-        # TODO: animation
-        state['mana']['v'] += 20  # TODO: prevent overflow
-    def choose_right(self, state):
-        print('choose right') # TODO: add a default encounter to state
-        
         
 class Card(pg.sprite.DirtySprite):
     def __init__(self, rect, color, txt):
@@ -49,7 +45,7 @@ class Card(pg.sprite.DirtySprite):
 if __name__ == "__main__":
     from settings import FPS
     import pview
-    import random 
+    import random
     random.seed(2)
     pg.init()
     res = 800, 600
