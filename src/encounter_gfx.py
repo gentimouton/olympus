@@ -25,7 +25,8 @@ class EncounterGfx():
         self.right_card.kill()
         
         
-class Card(pg.sprite.DirtySprite):
+class Card(pg.sprite.DirtySprite): 
+    # TODO: subclass dirtySpr with my own, having refresh callback when fullscreening 
     def __init__(self, rect, color, txt):
         pg.sprite.DirtySprite.__init__(self)
         self.rect0 = rect

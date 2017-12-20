@@ -9,9 +9,10 @@ def _mana_increase(x):
     def f(state):
         state.increase_mana(x)
     return f 
-def _add_encounter(kind=ENC_DFLT):
+def _add_encounter(kind=ENC_DFLT,n=1):
     def f(state):
-        state.append_encounter(kind)
+        for _ in range(n):
+            state.append_encounter(kind)
     return f
 
 # encounter_gfx data
@@ -24,7 +25,7 @@ encounter_data = {
             },
         'right': {
             'txt': 'nothing',
-            'effect': _add_encounter()
+            'effect': _add_encounter(ENC_DFLT, n=2)
             }
         }
     }

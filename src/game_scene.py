@@ -13,6 +13,8 @@ from hud import Hud
 import pview
 import pygame as pg
 from scene import SCN_MENU, Scene
+import settings
+from utils import DebugSpr
 
 
 random.seed(1)
@@ -24,14 +26,17 @@ class GameScene(Scene):
         # gfx
         self.bg = make_bg()
         self.sprites = pg.sprite.LayeredDirty()
-        self.encounter_gfx= None
+        self.encounter_gfx = None
         self._display_encounter()
         self.hud = Hud(self.sprites, self.model)
+        if settings.DEBUG:
+            self._debug_spr = DebugSpr(self)
+            self.sprites.add(self._debug_spr)
 
     def _display_encounter(self):
         try:
-            self.encounter_gfx.kill() # remove enc sprites from sprite group
-        except AttributeError: # self.encounter is None
+            self.encounter_gfx.kill()  # remove enc sprites from sprite group
+        except AttributeError:  # self.encounter is None
             pass
         self.encounter_gfx = EncounterGfx(self.model.cur_enc, self.sprites)
         
@@ -63,6 +68,7 @@ class GameScene(Scene):
         
     def _render(self):
         """ draw dirty sprites, if any. Typically nothing to do. """
+        self.sprites.update()
         dirty_rects = self.sprites.draw(pview.screen, self.bg)
         pg.display.update(dirty_rects)
         
