@@ -18,18 +18,21 @@ from scene import SCN_MENU, Scene
 random.seed(1)
 
 
-
-########################### Scene stuff
 class GameScene(Scene):        
     def __init__(self):
         self.model = GameModel()
         # gfx
         self.bg = make_bg()
         self.sprites = pg.sprite.LayeredDirty()
+        self.encounter_gfx= None
         self._display_encounter()
         self.hud = Hud(self.sprites, self.model)
 
     def _display_encounter(self):
+        try:
+            self.encounter_gfx.kill() # remove enc sprites from sprite group
+        except AttributeError: # self.encounter is None
+            pass
         self.encounter_gfx = EncounterGfx(self.model.cur_enc, self.sprites)
         
     def tick(self, ms):

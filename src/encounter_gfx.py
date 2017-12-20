@@ -17,7 +17,13 @@ class EncounterGfx():
         txt = self.data['right']['txt']
         self.right_card = Card((550, 150, 200, 300), random_color(), txt)
         spr_grp.add(self.mid_card, self.left_card, self.right_card)
-    
+        
+    def kill(self):
+        """ kill sprites. Could so a fancier animation, then kill them. """
+        self.left_card.kill()
+        self.mid_card.kill()
+        self.right_card.kill()
+        
         
 class Card(pg.sprite.DirtySprite):
     def __init__(self, rect, color, txt):
@@ -46,13 +52,15 @@ if __name__ == "__main__":
     from settings import FPS
     import pview
     import random
+    from game_model import ENC_DFLT
     random.seed(2)
     pg.init()
     res = 800, 600
     pview.set_mode(res)
     clock = pg.time.Clock()
+    # dummy data
     sprites = pg.sprite.LayeredDirty()
-    e = Encounter(sprites)
+    gfx = EncounterGfx(ENC_DFLT, sprites)
     bgcol1 = random_color()
     bgcol2 = random_color()
     # make bg
