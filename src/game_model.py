@@ -9,7 +9,7 @@ def _mana_increase(x):
     def f(state):
         state.increase_mana(x)
     return f 
-def _add_encounter(kind=ENC_DFLT,n=1):
+def _add_encounter(kind=ENC_DFLT, n=1):
     def f(state):
         for _ in range(n):
             state.append_encounter(kind)
@@ -20,7 +20,7 @@ encounter_data = {
     ENC_DFLT: {
         'txt': 'A Sphinx looks at you....\nWhat do you do?',
         'left': {
-            'txt': 'Say Hi!\n+10 mana', 
+            'txt': 'Say Hi!\n+10 mana',
             'effect': _mana_increase(10)
             },
         'right': {
@@ -51,11 +51,11 @@ class GameModel():
     # encounter_gfx effects exposed    
     def append_encounter(self, enc_kind):
         self.encounters.append(enc_kind)
-    def increase_mana(self,x):
-        self.mana += x # TODO: check for overflow
+    def increase_mana(self, x):
+        self.mana = min(self.mana + x, self.mana_max)
     
     # making a choice
     def choose(self, choice):
         """ choice can be 'left' or 'right' """
-        encounter_data[self.cur_enc][choice]['effect'](self) # update state
+        encounter_data[self.cur_enc][choice]['effect'](self)  # update state
         self.next_enc()
