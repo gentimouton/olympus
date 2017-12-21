@@ -51,20 +51,18 @@ class Gauge(pg.sprite.DirtySprite):
         self.v = v
         self.vmax = vmax
         self.refresh()
-        
+    
     def refresh(self):
         # draw gauge itself
         b = 2  # border thickness, in px, fixed across resolutions
-        # TODO: change this border from outward margin to inward padding
-        x, y, w, h = self.rect0
-        self.rect = pg.Rect((T(x) - b, T(y) - b, T(w) + 2 * b, T(h) + 2 * b))
-        surf = pg.Surface((self.rect.w, self.rect.h))
+        self.rect = T(pg.Rect(self.rect0))
+        w, h = self.rect.size
+        surf = pg.Surface((w, h))
         surf.fill(self.bgcol)  # empty part
         if self.v > 0:  # full part
-            fh = h * self.v // self.vmax  # height of full part   
-            inner_rect = pg.Rect(b, T(h - fh) + b, T(w), T(fh))
+            fh = (h - b * 2) * self.v // self.vmax  # height of full part   
+            inner_rect = pg.Rect(b, h - fh - b, w - b * 2, fh)
             surf.fill(self.color, inner_rect)
         surf.convert()
         self.image = surf
         self.dirty = 1
-        

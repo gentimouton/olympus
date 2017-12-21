@@ -7,7 +7,7 @@ from utils import random_color
 
 
 class EncounterGfx():
-    def __init__(self, enc_kind, spr_grp):
+    def __init__(self, enc_kind, spr_grp):  # TODO: should not know about spr_grp? 
         """ spr_grp is the current scene's sprite group """
         self.data = encounter_data[enc_kind]
         txt = self.data['txt']
@@ -28,22 +28,27 @@ class EncounterGfx():
 class Card(pg.sprite.DirtySprite): 
     # TODO: subclass dirtySpr with my own, having refresh callback when fullscreening 
     def __init__(self, rect, color, txt):
+        """ rect is a 4-tuple or a pygame Rect, 
+        color is a 3-tuple or a pygame Color, 
+        txt a string """
         pg.sprite.DirtySprite.__init__(self)
-        self.rect0 = rect
+        self.rect0 = pg.Rect(rect)  # Rect(Rect(x,y,w,h)) == Rect(x,y,w,h)
         self.color = color
         self.txt = txt
         self.refresh()
     
     def refresh(self):
         """ recompute image and rect. Called when screen resolution changed. """
-        x, y, w, h = self.rect0
-        self.rect = pg.Rect(T(x) - 1, T(y) - 1, T(w) + 2, T(h) + 2)
-        inner_rect = (1, 1, T(w), T(h))
-        surf = pg.Surface((T(w) + 2, T(h) + 2))
-        surf.fill((111, 111, 55))
+        b = 2  # border thickness in px, fixed across resolutions
+        border_color = (111, 111, 55)
+        self.rect = T(self.rect0)
+        w, h = self.rect.size
+        surf = pg.Surface((w, h))
+        inner_rect = pg.Rect(b, b, w - 2 * b, h - 2 * b)
+        surf.fill(border_color)
         surf.fill(self.color, inner_rect)
-        ptext.draw(self.txt, center=(T(w // 2), T(h // 2)), width=T(w),
-                   fontsize=T(20), surf=surf)
+        ptext.draw(self.txt, center=(w // 2, h // 2), width=inner_rect.w,
+                   fontsize=h // 12, surf=surf)
         surf.convert()
         self.image = surf
         self.dirty = 1

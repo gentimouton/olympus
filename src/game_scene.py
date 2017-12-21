@@ -63,7 +63,7 @@ class GameScene(Scene):
         self.bg = make_bg()
         pview.screen.blit(self.bg, (0, 0))
         for spr in self.sprites:
-            spr.refresh()
+            spr.refresh() # TODO: could set a recompute flag instead 
         pg.display.update()  # needed to blit the bg everywhere
         
     def _render(self):

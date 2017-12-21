@@ -18,7 +18,7 @@ def _add_encounter(kind=ENC_DFLT,n=1):
 # encounter_gfx data
 encounter_data = {
     ENC_DFLT: {
-        'txt': 'A Sphinx looks at you.\nWhat do you do?',
+        'txt': 'A Sphinx looks at you....\nWhat do you do?',
         'left': {
             'txt': 'Say Hi!\n+10 mana', 
             'effect': _mana_increase(10)
