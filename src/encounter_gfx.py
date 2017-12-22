@@ -1,9 +1,7 @@
 """ An encounter is a situation (text, image) and choices with consequences. """
 from game_model import encounter_data
-import ptext
-from pview import T
 import pygame as pg
-from utils import random_color
+from utils import random_color, ResSprite
 
 
 class EncounterGfx():
@@ -19,39 +17,21 @@ class EncounterGfx():
         spr_grp.add(self.mid_card, self.left_card, self.right_card)
         
     def kill(self):
-        """ kill sprites. Could so a fancier animation, then kill them. """
+        """ kill sprites. Could do a fancier animation, then kill them. """
         self.left_card.kill()
         self.mid_card.kill()
         self.right_card.kill()
         
-        
-class Card(pg.sprite.DirtySprite): 
-    # TODO: subclass dirtySpr with my own, having refresh callback when fullscreening 
+
+
+class Card(ResSprite): 
     def __init__(self, rect, color, txt):
         """ rect is a 4-tuple or a pygame Rect, 
         color is a 3-tuple or a pygame Color, 
         txt a string """
-        pg.sprite.DirtySprite.__init__(self)
-        self.rect0 = pg.Rect(rect)  # Rect(Rect(x,y,w,h)) == Rect(x,y,w,h)
-        self.color = color
-        self.txt = txt
-        self.refresh()
-    
-    def refresh(self):
-        """ recompute image and rect. Called when screen resolution changed. """
-        b = 2  # border thickness in px, fixed across resolutions
-        border_color = (111, 111, 55)
-        self.rect = T(self.rect0)
-        w, h = self.rect.size
-        surf = pg.Surface((w, h))
-        inner_rect = pg.Rect(b, b, w - 2 * b, h - 2 * b)
-        surf.fill(border_color)
-        surf.fill(self.color, inner_rect)
-        ptext.draw(self.txt, center=(w // 2, h // 2), width=inner_rect.w,
-                   fontsize=h // 12, surf=surf)
-        surf.convert()
-        self.image = surf
-        self.dirty = 1
+        ResSprite.__init__(self, rect, color=color,
+                           txt=txt, fontsize=24, txt_positioning='center',
+                           bcol=(111, 111, 55), bthick=2)
 
 
 if __name__ == "__main__":
@@ -59,6 +39,7 @@ if __name__ == "__main__":
     import pview
     import random
     from game_model import ENC_DFLT
+    from pview import T
     random.seed(2)
     pg.init()
     res = 800, 600
@@ -95,7 +76,9 @@ if __name__ == "__main__":
                     pview.screen.blit(bg, (0, 0))
                     pg.display.update()  # needed to blit the bg everywhere
                     for spr in sprites:
-                        spr.refresh()  # recompute graphics
+                        spr.recompute = 1
+        for spr in sprites:
+            spr.update() # process animations, redraw if changed resolution
         dirty_rects = sprites.draw(pview.screen, bg)
         pg.display.update(dirty_rects)
         clock.tick(FPS)

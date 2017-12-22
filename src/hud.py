@@ -1,6 +1,5 @@
 """ heads up display. bunch of gauges and icons and text. """
-from pview import T
-import pygame as pg
+from utils import ResSprite
 
 
 # TODO: take care of hud bg in here, not in game_bg
@@ -18,51 +17,31 @@ class Hud():
         v, vmax = self.state.mana, self.state.mana_max
         self.gauge.set(v, vmax)
 
-class ManaIcon(pg.sprite.DirtySprite):
+
+class ManaIcon(ResSprite):
     """ static icon. Square with a hole in the middle. """
-    def __init__(self, rect0):
-        pg.sprite.DirtySprite.__init__(self)
-        self.rect0 = rect0
-        self.refresh()
-        
-    def refresh(self):
-        x, y, w, h = self.rect0
-        self.rect = pg.Rect(T(x), T(y), T(w), T(h))
-        surf = pg.Surface((T(w), T(h)))
-        surf.fill((255, 0, 0))
-        hole = T(w // 4), T(h // 4), T(w // 2), T(h // 2) 
-        surf.fill((255, 0, 255), hole)
-        surf.set_colorkey((255, 0, 255), pg.RLEACCEL)
-        surf.convert()
-        self.image = surf
-        self.dirty = 1
-        
-class Gauge(pg.sprite.DirtySprite):
-    def __init__(self, v, vmax, rect0, color=(222, 22, 22), bgcolor=(0, 0, 0)):
-        pg.sprite.DirtySprite.__init__(self)
+    def __init__(self, rect):
+        ResSprite.__init__(self, rect, color=(255, 0, 0))
+        # make square hole
+#         hole = T(w // 4), T(h // 4), T(w // 2), T(h // 2) 
+#         surf.fill((255, 0, 255), hole)
+#         surf.set_colorkey((255, 0, 255), pg.RLEACCEL)
+        # TODO: make hole: break down _recompute into subparts, one accepting a surf, one returning T(rect)?
+
+
+class Gauge(ResSprite):
+    def __init__(self, v, vmax, rect, color=(222, 22, 22), bgcolor=(0, 0, 0)):
+        ResSprite.__init__(self, rect, color, bcol=bgcolor, bthick=2)
         self.v = v
         self.vmax = vmax
-        self.rect0 = rect0
-        self.color = color
-        self.bgcol = bgcolor
-        self.refresh()
         
     def set(self, v, vmax):
         self.v = v
         self.vmax = vmax
-        self.refresh()
+        self.recompute = 1
     
-    def refresh(self):
-        # draw gauge itself
-        b = 2  # border thickness, in px, fixed across resolutions
-        self.rect = T(pg.Rect(self.rect0))
-        w, h = self.rect.size
-        surf = pg.Surface((w, h))
-        surf.fill(self.bgcol)  # empty part
-        if self.v > 0:  # full part
-            fh = (h - b * 2) * self.v // self.vmax  # height of full part   
-            inner_rect = pg.Rect(b, h - fh - b, w - b * 2, fh)
-            surf.fill(self.color, inner_rect)
-        surf.convert()
-        self.image = surf
-        self.dirty = 1
+# TODO: draw gauge properly, by breaking down _recompute 
+#         if self.v > 0:  # full part
+#             fh = (h - b * 2) * self.v // self.vmax  # height of full part   
+#             inner_rect = pg.Rect(b, h - fh - b, w - b * 2, fh)
+#             surf.fill(self.color, inner_rect)
