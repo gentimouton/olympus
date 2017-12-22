@@ -34,9 +34,9 @@ class Gauge(NeatSprite):
     def set(self, v, vmax):
         self.v = v
         self.vmax = vmax
-        w, h = self.rect0.size # rect0 from parent class
+        w, h = self.rect0.size  # rect0 from parent class
         if self.v > 0:  # draw full part of gauge
             fh = (h * self.v) // self.vmax  # height of full part, in base resolution
-            shape = Shape('rect', (0, 0, w, fh), self._gauge_color)
+            shape = Shape('rect', (0, h - fh, w, fh), self._gauge_color)
             self.set_shapes([shape])
         
