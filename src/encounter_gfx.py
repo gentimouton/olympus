@@ -1,7 +1,7 @@
 """ An encounter is a situation (text, image) and choices with consequences. """
 from game_model import encounter_data
 import pygame as pg
-from utils import random_color, ResSprite
+from utils import random_color, NeatSprite
 
 
 class EncounterGfx():
@@ -24,12 +24,12 @@ class EncounterGfx():
         
 
 
-class Card(ResSprite): 
+class Card(NeatSprite): 
     def __init__(self, rect, color, txt):
         """ rect is a 4-tuple or a pygame Rect, 
         color is a 3-tuple or a pygame Color, 
         txt a string """
-        ResSprite.__init__(self, rect, color=color,
+        NeatSprite.__init__(self, rect, color=color,
                            txt=txt, fontsize=24, txt_positioning='center',
                            bcol=(111, 111, 55), bthick=2)
 

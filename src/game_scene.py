@@ -14,7 +14,7 @@ import pview
 import pygame as pg
 from scene import SCN_MENU, Scene
 import settings
-from utils import ResSprite
+from utils import NeatSprite
 
 
 random.seed(1)
@@ -73,17 +73,17 @@ class GameScene(Scene):
         pg.display.update(dirty_rects)
         
 
-class DebugSpr(ResSprite):
+class DebugSpr(NeatSprite):
     """ Hack class to display state of the game scene on screen """
     def __init__(self, gs):
-        ResSprite.__init__(self, (600, 550, 200, 50), layer=100, fontsize=16,
+        NeatSprite.__init__(self, (600, 550, 200, 50), layer=100, fontsize=16,
                            txt_aa=False, txt_owidth=2, txt_ocolor=(0, 0, 0))
         self.gs = gs
         
     def update(self):
         txt = '--debug--\n%d encounters under' % len(self.gs.model.encounters)
         self.set_txt(txt)
-        ResSprite.update(self)  # redraw if needed
+        NeatSprite.update(self)  # redraw if needed
         
         
 if __name__ == "__main__":

@@ -1,20 +1,35 @@
-from random import randint as r
+from random import randint
 
 import ptext
 from pview import T
-import pygame as pg
 import pview
+import pygame as pg
+
 
 def random_color():
-    return r(22, 222), r(22, 222), r(22, 222)
+    return randint(22, 222), randint(22, 222), randint(22, 222)
 
 
-_TRANSPARENT = 255, 0, 255  # magenta
-class ResSprite(pg.sprite.DirtySprite):
+TRANSPARENT = 255, 0, 255  # magenta
+
+class Shape():
+    """ container for NeatSprite to draw shapes like rect and circle.
+    Used by subclasses of NeatSprite to pass the shapes to draw.
+    Example: Shape('rect', (0,0,200,10), (0,222,0))
+    Provide shape dimensions ignoring the border thickness of parent sprite.
+    Example: if parent rect.w = 10 and border thickness = 1, passing a rect of 
+    (2,y,10,h) will convert it internally to (1+T(2), y, T(10)-2, h)     
+    """
+    def __init__(self, kind, dims, color):
+        self.kind = kind
+        self.dims = dims
+        self.color = color
+
+class NeatSprite(pg.sprite.DirtySprite):
     """ Responsive Sprite: automatically scales to screen resolution, 
     provided its `update` method is called.
     """
-    def __init__(self, rect0, color=_TRANSPARENT, layer=1,
+    def __init__(self, rect0, color=TRANSPARENT, shapes=[], layer=1,
                  txt=None, fontsize=12,
                  txt_positioning='topleft',
                  txt_aa=True, txt_owidth=None, txt_ocolor=None,
@@ -22,6 +37,7 @@ class ResSprite(pg.sprite.DirtySprite):
         """
         rect0: dimensions in the base resolution. Pygame rect or a 4-tuple. 
         color: optional, pygame color, string, or 3-tuple. Default transparent.
+        shapes: ordered list of Shapes
         layer: int in LayeredDirty group. Higher = foreground.
         txt: string, optional.
         fontsize: in px, default 12.
@@ -36,6 +52,7 @@ class ResSprite(pg.sprite.DirtySprite):
         pg.sprite.DirtySprite.__init__(self)
         self.rect0 = pg.Rect(rect0)  # Rect(Rect(x,y,w,h)) == Rect(x,y,w,h)
         # TODO: too many props. Use a dict for text and positioning instead?
+        self.shapes = shapes
         self.layer = layer
         self.color = color
         self.bcol = bcol
@@ -46,23 +63,38 @@ class ResSprite(pg.sprite.DirtySprite):
         self.txt_aa = txt_aa
         self.txt_owidth = txt_owidth
         self.txt_ocolor = txt_ocolor
-        self.recompute = 1 # similar to DirtySprite.dirty
+        self.recompute = 1  # similar to DirtySprite.dirty
 
     def _recompute(self):
-        """ recompute image and rect after screen resolution changed,
-        or after txt changed. """
+        """ recompute image and rect after screen res, shapes, or text changed. 
+        First fill bg color, then draw shapes in order, and finish with text.
+        """
         self._res = pview.size  # resolution this spr is for
         self.rect = T(self.rect0)
         w, h = self.rect.size
         surf = pg.Surface((w, h))
+        
+        # draw border and fill with background color
         b = self.bthick
-        inner_rect = pg.Rect(b, b, w - 2 * b, h - 2 * b)
+        rect = pg.Rect(b, b, w - 2 * b, h - 2 * b)  # inner part
         if self.bcol:
             surf.fill(self.bcol)  # draw border
-        surf.fill(self.color, inner_rect)  # draw inner part
+        surf.fill(self.color, rect)
+        
+        # draw shapes
+        for shape in self.shapes:
+            if shape.kind == 'rect':
+                x, y, w, h = shape.dims
+                shape_rect = pg.Rect(T(x) + b, T(y) + b, T(w) - 2 * b, T(h) - 2 * b)
+                surf.fill(shape.color, shape_rect)
+            else:
+                txt = 'NeatSprite: unsupported Shape.kind: %s' % shape.kind
+                raise NotImplementedError(txt)
+                
+        # draw text
         if self._txt:
             txt_kwargs = {
-                'width': inner_rect.w,
+                'width': rect.w,
                 'fontsize': T(self.fontsize),
                 'antialias': self.txt_aa,
                 'owidth': self.txt_owidth,
@@ -74,18 +106,27 @@ class ResSprite(pg.sprite.DirtySprite):
             elif self.txt_positioning == 'topleft':
                 txt_kwargs['pos'] = 0, 0 
             ptext.draw(self._txt, **txt_kwargs)
-        surf.set_colorkey(_TRANSPARENT, pg.RLEACCEL)
+        surf.set_colorkey(TRANSPARENT, pg.RLEACCEL)
         surf.convert()
         self.image = surf
         self.dirty = 1
         self.recompute = 0
-
+    
     def set_txt(self, txt):
         if txt != self._txt:
             self._txt = txt
             self._recompute()
+    
+    def set_shapes(self, shapes):
+        self.shapes = shapes
+        self._recompute()
         
     def update(self, *args, **kwargs):
         if self.recompute or pview.size != self._res:
             self._recompute()
+
+
+
+
+
 

@@ -1,9 +1,8 @@
 """ heads up display. bunch of gauges and icons and text. """
-from utils import ResSprite
+from utils import NeatSprite, TRANSPARENT, Shape
 
 
 # TODO: take care of hud bg in here, not in game_bg
-
 class Hud():
     def __init__(self, spr_grp, state):
         # TODO: pass a rect saying where the HUD lives
@@ -18,30 +17,26 @@ class Hud():
         self.gauge.set(v, vmax)
 
 
-class ManaIcon(ResSprite):
+class ManaIcon(NeatSprite):
     """ static icon. Square with a hole in the middle. """
     def __init__(self, rect):
-        ResSprite.__init__(self, rect, color=(255, 0, 0))
-        # make square hole
-#         hole = T(w // 4), T(h // 4), T(w // 2), T(h // 2) 
-#         surf.fill((255, 0, 255), hole)
-#         surf.set_colorkey((255, 0, 255), pg.RLEACCEL)
-        # TODO: make hole: break down _recompute into subparts, one accepting a surf, one returning T(rect)?
+        w, h = rect[2], rect[3]
+        shape = Shape('rect', (w // 4, h // 4, w // 2, h // 2), TRANSPARENT)
+        NeatSprite.__init__(self, rect, color=(255, 0, 0), shapes=[shape])
 
 
-class Gauge(ResSprite):
+class Gauge(NeatSprite):
     def __init__(self, v, vmax, rect, color=(222, 22, 22), bgcolor=(0, 0, 0)):
-        ResSprite.__init__(self, rect, color, bcol=bgcolor, bthick=2)
-        self.v = v
-        self.vmax = vmax
+        NeatSprite.__init__(self, rect, bgcolor, bthick=2)
+        self._gauge_color = color
+        self.set(v, vmax)
         
     def set(self, v, vmax):
         self.v = v
         self.vmax = vmax
-        self.recompute = 1
-    
-# TODO: draw gauge properly, by breaking down _recompute 
-#         if self.v > 0:  # full part
-#             fh = (h - b * 2) * self.v // self.vmax  # height of full part   
-#             inner_rect = pg.Rect(b, h - fh - b, w - b * 2, fh)
-#             surf.fill(self.color, inner_rect)
+        w, h = self.rect0.size # rect0 from parent class
+        if self.v > 0:  # draw full part of gauge
+            fh = (h * self.v) // self.vmax  # height of full part, in base resolution
+            shape = Shape('rect', (0, 0, w, fh), self._gauge_color)
+            self.set_shapes([shape])
+        
