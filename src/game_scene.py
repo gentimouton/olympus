@@ -5,6 +5,7 @@ Game is over when certain gauges reach certain states.
 
 import random
 
+from constants import CMD_NEWG, CMD_RESM
 from controls import controller
 from encounter_gfx import EncounterGfx
 from game_bg import make_bg
@@ -22,6 +23,9 @@ random.seed(1)
 
 class GameScene(Scene):
     def __init__(self):
+        # load images and sounds from disk here
+        self._init()
+    def _init(self):
         self.model = GameModel()
         # gfx
         self.bg = make_bg()
@@ -59,7 +63,12 @@ class GameScene(Scene):
         self._render()
         return None, {}
 
-    def reset_resume(self):
+    def reset_resume(self, **kwargs):
+        """ called by scene manager from the menu scene, passing kwargs. """
+        if kwargs['cmd'] == CMD_NEWG:
+            self._init()
+        elif kwargs['cmd'] == CMD_RESM:
+            pass
         self.refresh_view()
         
     def refresh_view(self):

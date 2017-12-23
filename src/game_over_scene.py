@@ -26,6 +26,7 @@ class GameOverScene(Scene):
         kwargs passed by game scene. 
         """
         self.enc_seen = kwargs['enc_seen']
+        # TODO: say why the game ended, via constants file probably
         
     def _render(self):
         pview.fill((22,22,22))
