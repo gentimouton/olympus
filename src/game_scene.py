@@ -53,7 +53,7 @@ class GameScene(Scene):
             self.hud.update()
             self._display_encounter()
         if self.model.game_status == GST_LOST:
-            return SCN_OVER, {} # TODO: pass score
+            return SCN_OVER, {'enc_seen': self.model.encounters_seen}
             
         # update graphics
         self._render()
@@ -84,8 +84,9 @@ class DebugSpr(NeatSprite):
         self.gs = gs
         
     def update(self):
-        txt = '--debug--\n%d encounters under\nmana %d' % (
-            len(self.gs.model.encounters), self.gs.model.mana
+        state = self.gs.model
+        txt = '--debug--\n%d encounters under\nmana %d\nseen %d encounters' % (
+            len(state.encounters), state.mana, state.encounters_seen
             )
         self.set_txt(txt)
         NeatSprite.update(self)  # redraw if needed

@@ -37,11 +37,12 @@ class GameModel():
     """ game state - can save this via pickle """
     def __init__(self):
         self.game_status = GST_LIVE
+        self.mana = 10
+        self.mana_max = 100
+        self.encounters_seen = 0
         self.encounters = deque([ENC_DFLT, ENC_DFLT])
         self.cur_enc = None
         self.next_enc()
-        self.mana = 10
-        self.mana_max = 100
         
     def next_enc(self):
         """ pop the next encounter_gfx """
@@ -50,6 +51,7 @@ class GameModel():
         except IndexError:  # empty: add 2 default ones
             self.encounters.extend([ENC_DFLT, ENC_DFLT])  # TODO: game over instead?
             self.cur_enc = self.encounters.popleft()
+        self.encounters_seen += 1
             
     def game_lost(self):
         self.game_status = GST_LOST

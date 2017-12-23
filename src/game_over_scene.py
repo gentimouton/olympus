@@ -10,7 +10,7 @@ class GameOverScene(Scene):
     """ Main menu """
     
     def __init__(self):
-        pass
+        self.enc_seen = None
     
     def tick(self, ms):
         if controller.btn_event('select'):
@@ -19,12 +19,19 @@ class GameOverScene(Scene):
         return None, {}
     
     def refresh_view(self):
-        pass # no need to do anything until using dirty sprites
+        pass # no need to do anything unless using dirty sprites
     
+    def reset_resume(self, **kwargs):
+        """ called by scene manager when the game scene ends. 
+        kwargs passed by game scene. 
+        """
+        self.enc_seen = kwargs['enc_seen']
+        
     def _render(self):
         pview.fill((22,22,22))
-        pview.fill('red', T(100, 300, 450, 70))
-        ptext.draw('Game over', T(150, 320), fontsize=T(70), color='black')
+        txt = 'Game over\n%d encounters seen' % self.enc_seen
+        ptext.draw(txt, T(150, 320), fontsize=T(70), 
+                   color='black', background='red')
         pg.display.flip()
         
 
