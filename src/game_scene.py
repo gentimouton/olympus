@@ -8,11 +8,11 @@ import random
 from controls import controller
 from encounter_gfx import EncounterGfx
 from game_bg import make_bg
-from game_model import GameModel
+from game_model import GameModel, GST_LOST
 from hud import Hud
 import pview
 import pygame as pg
-from scene import SCN_MENU, Scene
+from scene import SCN_MENU, Scene, SCN_OVER
 import settings
 from utils import NeatSprite
 
@@ -52,6 +52,9 @@ class GameScene(Scene):
             self.model.choose('right')
             self.hud.update()
             self._display_encounter()
+        if self.model.game_status == GST_LOST:
+            return SCN_OVER, {} # TODO: pass score
+            
         # update graphics
         self._render()
         return None, {}
@@ -81,7 +84,9 @@ class DebugSpr(NeatSprite):
         self.gs = gs
         
     def update(self):
-        txt = '--debug--\n%d encounters under' % len(self.gs.model.encounters)
+        txt = '--debug--\n%d encounters under\nmana %d' % (
+            len(self.gs.model.encounters), self.gs.model.mana
+            )
         self.set_txt(txt)
         NeatSprite.update(self)  # redraw if needed
         

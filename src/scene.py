@@ -2,6 +2,7 @@
 SCN_MENU = 'menu'
 SCN_GAME = 'game'
 SCN_QUIT = 'quit' # dummy scene, enables quitting the game within a scene
+SCN_OVER = 'over' # game over scene
 
 class Scene():
     

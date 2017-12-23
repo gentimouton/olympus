@@ -21,19 +21,22 @@ encounter_data = {
         'txt': 'A Sphinx looks at you....\nWhat do you do?',
         'left': {
             'txt': 'Say Hi!\n+10 mana',
-            'effect': _mana_increase(10)
+            'effects': [_mana_increase(10)]
             },
         'right': {
             'txt': 'nothing',
-            'effect': _add_encounter(ENC_DFLT, n=2)
+            'effects': [_add_encounter(ENC_DFLT, n=2), _mana_increase(-5)] 
             }
         }
     }
   
-
+# game states
+GST_LOST = 'lost'
+GST_LIVE = 'live'
 class GameModel():
     """ game state - can save this via pickle """
     def __init__(self):
+        self.game_status = GST_LIVE
         self.encounters = deque([ENC_DFLT, ENC_DFLT])
         self.cur_enc = None
         self.next_enc()
@@ -47,15 +50,21 @@ class GameModel():
         except IndexError:  # empty: add 2 default ones
             self.encounters.extend([ENC_DFLT, ENC_DFLT])  # TODO: game over instead?
             self.cur_enc = self.encounters.popleft()
-
+            
+    def game_lost(self):
+        self.game_status = GST_LOST
+    
     # encounter_gfx effects exposed    
     def append_encounter(self, enc_kind):
         self.encounters.append(enc_kind)
     def increase_mana(self, x):
         self.mana = min(self.mana + x, self.mana_max)
+        if self.mana <= 0:
+            self.game_lost()
     
     # making a choice
     def choose(self, choice):
         """ choice can be 'left' or 'right' """
-        encounter_data[self.cur_enc][choice]['effect'](self)  # update state
+        for effect_cb in encounter_data[self.cur_enc][choice]['effects']:
+            effect_cb(self) # update state
         self.next_enc()

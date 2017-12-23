@@ -71,21 +71,25 @@ class NeatSprite(pg.sprite.DirtySprite):
         """
         self._res = pview.size  # resolution this spr is for
         self.rect = T(self.rect0)
-        w, h = self.rect.size
-        surf = pg.Surface((w, h))
+        tw, th = self.rect.size
+        surf = pg.Surface((tw, th))
         
         # draw border and fill with background color
         b = self.bthick
-        rect = pg.Rect(b, b, w - 2 * b, h - 2 * b)  # inner part
+        inner_rect = pg.Rect(b, b, tw - 2 * b, th - 2 * b)  # inner part
         if self.bcol:
             surf.fill(self.bcol)  # draw border
-        surf.fill(self.color, rect)
+        surf.fill(self.color, inner_rect)
         
         # draw shapes
         for shape in self.shapes:
             if shape.kind == 'rect':
                 x, y, w, h = shape.dims
-                shape_rect = pg.Rect(T(x) + b, T(y) + b, T(w) - 2 * b, T(h) - 2 * b)
+                xx = b + T(x)* inner_rect.w // self.rect.w # fit into inner rect
+                yy = b + T(y) * inner_rect.h // self.rect.h 
+                ww = T(w) * inner_rect.w // self.rect.w 
+                hh = T(h) * inner_rect.h // self.rect.h
+                shape_rect = pg.Rect(xx, yy, ww, hh)
                 surf.fill(shape.color, shape_rect)
             else:
                 txt = 'NeatSprite: unsupported Shape.kind: %s' % shape.kind
@@ -94,7 +98,7 @@ class NeatSprite(pg.sprite.DirtySprite):
         # draw text
         if self._txt:
             txt_kwargs = {
-                'width': rect.w,
+                'width': inner_rect.w,
                 'fontsize': T(self.fontsize),
                 'antialias': self.txt_aa,
                 'owidth': self.txt_owidth,
@@ -102,7 +106,7 @@ class NeatSprite(pg.sprite.DirtySprite):
                 'surf': surf
                 }
             if self.txt_positioning == 'center':
-                txt_kwargs['center'] = w // 2, h // 2
+                txt_kwargs['center'] = tw // 2, th // 2
             elif self.txt_positioning == 'topleft':
                 txt_kwargs['pos'] = 0, 0 
             ptext.draw(self._txt, **txt_kwargs)
@@ -124,9 +128,3 @@ class NeatSprite(pg.sprite.DirtySprite):
     def update(self, *args, **kwargs):
         if self.recompute or pview.size != self._res:
             self._recompute()
-
-
-
-
-
-
