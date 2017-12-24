@@ -47,7 +47,7 @@ class GameScene(Scene):
     def tick(self, ms):
         # process player inputs
         if controller.btn_event('select'):
-            return SCN_MENU, {}
+            return SCN_MENU, {'can_resume':1} # add "Resume Game" to menu scene
         if controller.btn_event('left'):
             self.model.choose('left')
             self.hud.update()
