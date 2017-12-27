@@ -92,12 +92,43 @@ def make_avatar1(bin_img, goodness, lawfulness):
     dest_surf.blit(img, (0, 0))
     return dest_surf
 
+def make_avatar2(bin_img, goodness, lawfulness):
+    """ bin_img is a binary image (ie black and white).
+    g = goodness, -50 to 50
+    l = lawfulness, -50 to 50
+    Return image where goodness and lawfulness are displayed in bg via bars, 
+    and foreground is silhouette.
+    """
+    dest_surf = pg.Surface(bin_img.get_size())
+    w, h = dest_surf.get_size()
+    # draw vertical bars
+    hh = h * (lawfulness + 50) // 100  # lawfulness bar height
+    dest_surf.fill((55, 55, 222), (0, 0, w // 2, hh))
+    dest_surf.fill((222, 55, 55), (0, hh, w // 2, h - hh))
+    hh = h * (goodness + 50) // 100  # goodness bar height
+    dest_surf.fill((188, 188, 188), (w // 2, 0, w // 2, hh))
+    dest_surf.fill((55, 55, 55), (w // 2, hh, w // 2, h - hh))
+    # draw horizontally instead
+#     ww = w * (lawfulness + 50) // 100  # lawfulness bar width
+#     dest_surf.fill((55, 55, 222), (0, 0, ww, h // 2))
+#     dest_surf.fill((222, 55, 55), (ww, 0, w - ww, h // 2))
+#     ww = w * (goodness + 50) // 100  # goodness bar height
+#     dest_surf.fill((188, 188, 188), (0, h // 2, ww, h // 2))
+#     dest_surf.fill((55, 55, 55), (ww, h // 2, w - ww, h // 2))
+    # blit silhouette
+    img = bin_img.copy()
+    img.set_colorkey((255, 255, 255), pg.RLEACCEL)
+    dest_surf.blit(img, (0, 0))
+    return dest_surf
+
+    
+    
 def main():
     pg.init()
     w, h = 800, 600
     pg.display.set_mode((w, h))
     screen = pg.display.get_surface()
-    screen.fill((55, 55, 55))
+    screen.fill((0, 0, 0))
     # convert image to square monochrome silhouette, and store it to other file
     sil_img = make_silhouette('owl3.png', 'owl3_mono.png')
     n = 3  # number of colors displayed on each side of the spectrum 
@@ -107,8 +138,8 @@ def main():
             rect = 10 + i * ww, 10 + j * hh, ww - 2, hh - 2
             goodness = j * 100 // n // 2 - 50
             lawfulness = i * 100 // n // 2 - 50
-            img = make_avatar1(sil_img, goodness, lawfulness)
-#             img = make_avatar2(sil_img, goodness, lawfulness)
+#             img = make_avatar1(sil_img, goodness, lawfulness)
+            img = make_avatar2(sil_img, goodness, lawfulness)
             screen.blit(img, rect)
             
     # flip screen
