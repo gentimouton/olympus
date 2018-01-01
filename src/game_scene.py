@@ -63,15 +63,15 @@ class GameScene(Scene):
         self._render()
         return None, {}
 
-    def reset_resume(self, **kwargs):
+    def resume(self, **kwargs):
         """ called by scene manager from the menu scene, passing kwargs. """
         if kwargs['cmd'] == CMD_NEWG:
             self._init()
         elif kwargs['cmd'] == CMD_RESM:
             pass
-        self.refresh_view()
+        self.redraw()
         
-    def refresh_view(self):
+    def redraw(self):
         self.bg = make_bg()
         pview.screen.blit(self.bg, (0, 0))
         for spr in self.sprites:
@@ -117,7 +117,7 @@ if __name__ == "__main__":
                     done = True
                 elif event.key == pg.K_F11:
                     pview.toggle_fullscreen()
-                    s.refresh_view()
+                    s.redraw()
         ms = clock.tick(FPS)
         scene_id, kwargs = s.tick(ms)
         pg.display.set_caption('game scene %.1f' % clock.get_fps())

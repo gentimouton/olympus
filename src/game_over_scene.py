@@ -7,7 +7,6 @@ from scene import Scene, SCN_MENU
 
 
 class GameOverScene(Scene):
-    """ Main menu """
     
     def __init__(self):
         self.enc_seen = None
@@ -18,10 +17,7 @@ class GameOverScene(Scene):
         self._render()
         return None, {}
     
-    def refresh_view(self):
-        pass # no need to do anything unless using dirty sprites
-    
-    def reset_resume(self, **kwargs):
+    def resume(self, **kwargs):
         """ called by scene manager when the game scene ends. 
         kwargs passed by game scene. 
         """
@@ -29,10 +25,8 @@ class GameOverScene(Scene):
         # TODO: say why the game ended, via constants file probably
         
     def _render(self):
-        pview.fill((22,22,22))
+        pview.fill((0, 0, 0))
         txt = 'Game over\n%d encounters seen' % self.enc_seen
-        ptext.draw(txt, T(150, 320), fontsize=T(70), 
+        ptext.draw(txt, T(150, 320), fontsize=T(70),
                    color='black', background='red')
         pg.display.flip()
-        
-

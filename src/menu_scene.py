@@ -30,8 +30,8 @@ class MenuScene(Scene):
         self._render()
         return None, {}
 
-    def reset_resume(self, **kwargs):
-        """ called by scene manager from the menu scene, passing kwargs. """
+    def resume(self, **kwargs):
+        """ called by scene manager from the game scene, passing kwargs. """
         self._choice = 0
         if kwargs.get('can_resume'):
             self._choices = [
@@ -45,7 +45,7 @@ class MenuScene(Scene):
                 ('Quit', SCN_QUIT, {})
                 ]
             
-    def refresh_view(self):
+    def redraw(self):
         pass  # no need to do anything until using dirty sprites
     
     def _render(self):

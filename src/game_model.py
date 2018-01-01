@@ -19,12 +19,15 @@ def _add_encounter(kind=ENC_DFLT, n=1):
 encounter_data = {
     ENC_DFLT: {
         'txt': 'A Sphinx looks at you....\nWhat do you do?',
+        'bgcolor': (222, 55, 11),
         'left': {
             'txt': 'Say Hi!\n+10 mana',
+            'bgcolor': (55, 111, 111),
             'effects': [_mana_increase(10)]
             },
         'right': {
             'txt': 'nothing',
+            'bgcolor': (111, 55, 111),
             'effects': [_add_encounter(ENC_DFLT, n=2), _mana_increase(-5)] 
             }
         }
@@ -68,5 +71,5 @@ class GameModel():
     def choose(self, choice):
         """ choice can be 'left' or 'right' """
         for effect_cb in encounter_data[self.cur_enc][choice]['effects']:
-            effect_cb(self) # update state
+            effect_cb(self)  # update state
         self.next_enc()

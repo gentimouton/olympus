@@ -12,19 +12,19 @@ class SceneManager():
         self.cur_scene = self.scenes[first_scene_id]
 
     def tick(self, ms):
-        """ update current scene """
+        """ update current scene. Return an outcome (eg quit game). """
         next_scene_id, kwargs = self.cur_scene.tick(ms)
         if next_scene_id == SCN_QUIT:  # quit via dummy scene constant
             return OUT_QUIT
         elif next_scene_id is not None:  # change scene
             self.cur_scene.pause()
             self.cur_scene = self.scenes[next_scene_id]
-            self.cur_scene.reset_resume(**kwargs)
+            self.cur_scene.resume(**kwargs)
         return OUT_NONE
     
-    def refresh_view(self):
+    def redraw(self):
         """ controls switched to full screen, so redraw scene from scratch """
-        self.cur_scene.refresh_view()
+        self.cur_scene.redraw()
 
 def init():
     """ needed because Scenes need pygame to be initialized 

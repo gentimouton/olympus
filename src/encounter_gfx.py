@@ -1,19 +1,22 @@
 """ An encounter is a situation (text, image) and choices with consequences. """
 from game_model import encounter_data
 import pygame as pg
-from utils import random_color, NeatSprite
+from utils import NeatSprite
 
 
 class EncounterGfx():
     def __init__(self, enc_kind, spr_grp):  # TODO: should not know about spr_grp? 
         """ spr_grp is the current scene's sprite group """
-        self.data = encounter_data[enc_kind]
-        txt = self.data['txt']
-        self.mid_card = Card((300, 150, 200, 300), random_color(), txt)
-        txt = self.data['left']['txt']
-        self.left_card = Card((50, 150, 200, 300), random_color(), txt)
-        txt = self.data['right']['txt']
-        self.right_card = Card((550, 150, 200, 300), random_color(), txt)
+        data = encounter_data[enc_kind]
+        self.mid_card = Card((300, 150, 200, 300), 
+                             data['bgcolor'], 
+                             data['txt'])
+        self.left_card = Card((50, 150, 200, 300),
+                              data['left']['bgcolor'], 
+                              data['left']['txt'])
+        self.right_card = Card((550, 150, 200, 300),
+                               data['right']['bgcolor'],
+                               data['right']['txt'])
         spr_grp.add(self.mid_card, self.left_card, self.right_card)
         
     def kill(self):
@@ -40,6 +43,7 @@ if __name__ == "__main__":
     import random
     from game_model import ENC_DFLT
     from pview import T
+    from utils import random_color
     random.seed(2)
     pg.init()
     res = 800, 600
