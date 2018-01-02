@@ -29,8 +29,8 @@ def make_emoji(goodness, color1=(0, 0, 0), color2=TRANSPARENT):
         pg.draw.circle(surf, color1, (88, 58 - d), 10)
     if goodness < 0:  # evil imp ears
         d = int((1 - SQRT2 / 2) * 64 - 12 * abs(goodness) // 50) 
-        pg.draw.polygon(surf, color1, [(d, d), (48, d), (d, 48)])
-        pg.draw.polygon(surf, color1, [(128 - d, d), (128 - 48, d), (128 - d, 128 - 48)])
+        pg.draw.polygon(surf, color1, [(d, d), (48, d + 5), (d + 5, 48)])
+        pg.draw.polygon(surf, color1, [(128 - d, d), (128 - 48, d + 5), (128 - d - 5, 128 - 48)])
 
     dx = abs(16 * goodness // 50)  # from 16 (good) to 0 (neutral) to 16 (evil)
     dy = abs(16 * goodness // 50)  # from 16 (good) to -16 (evil)
