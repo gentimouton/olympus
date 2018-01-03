@@ -30,8 +30,7 @@ class NeatSprite(pg.sprite.DirtySprite):
     provided its `update` method is called.
     """
     def __init__(self, rect0, color=TRANSPARENT, shapes=[], layer=1,
-                 txt=None, fontsize=12,
-                 txt_positioning='topleft',
+                 txt=None, fontsize=12, txt_positioning='topleft',
                  txt_aa=True, txt_owidth=None, txt_ocolor=None,
                  bcol=None, bthick=0):
         """
@@ -63,7 +62,7 @@ class NeatSprite(pg.sprite.DirtySprite):
         self.txt_aa = txt_aa
         self.txt_owidth = txt_owidth
         self.txt_ocolor = txt_ocolor
-        self.recompute = 1  # similar to DirtySprite.dirty
+        self.recompute = 1  # should image be recomputed? Similar to DirtySprite.dirty
 
     def _recompute(self):
         """ recompute image and rect after screen res, shapes, or text changed. 
@@ -113,8 +112,9 @@ class NeatSprite(pg.sprite.DirtySprite):
         surf.set_colorkey(TRANSPARENT, pg.RLEACCEL)
         surf.convert()
         self.image = surf
-        self.dirty = 1
-        self.recompute = 0
+        self.dirty = 1 # ready to be blit on screen
+        self.recompute = 0 # done computing my image
+                 
     
     def set_txt(self, txt):
         if txt != self._txt:

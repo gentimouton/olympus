@@ -27,7 +27,7 @@ class MenuScene(Scene):
             self._choice = (self._choice + 1) % len(self._choices)
         elif controller.btn_event('up'):
             self._choice = (self._choice - 1) % len(self._choices)
-        self._render()
+        self._draw()
         return None, {}
 
     def resume(self, **kwargs):
@@ -45,10 +45,10 @@ class MenuScene(Scene):
                 ('Quit', SCN_QUIT, {})
                 ]
             
-    def redraw(self):
-        pass  # no need to do anything until using dirty sprites
+#     def redraw(self):
+#         pass  # no need to do anything until using dirty sprites
     
-    def _render(self):
+    def _draw(self):
         pview.fill('black')
         for i, choice in enumerate(self._choices):
             ptext.draw(choice[0], T(200, 200 + i * 100), fontsize=T(70))
@@ -62,8 +62,8 @@ if __name__ == "__main__":
     pg.init()
     pview.set_mode((800, 600))
     clock = pg.time.Clock()
-    s = MenuScene()
+    scene = MenuScene()
     while not pg.event.peek([pg.QUIT, pg.KEYDOWN]):
         ms = clock.tick(FPS)        
-        scene_id, kwargs = s.tick(ms)
+        scene_id, kwargs = scene.tick(ms)
         

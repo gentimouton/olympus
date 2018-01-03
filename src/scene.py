@@ -21,9 +21,3 @@ class Scene():
     def resume(self, **kwargs):
         """ Scene is active again. """
         pass
-    def redraw(self):
-        """ Redraw from scratch when switching from/to fullscreen.
-        Recompute background and sprites for scenes using dirty sprites.
-        Nothing to do for scenes not using dirty sprites (they draw every tick).
-        """
-        pass 

@@ -18,8 +18,11 @@ def _add_encounter(kind=ENC_DFLT, n=1):
 # encounter_gfx data
 encounter_data = {
     ENC_DFLT: {
-        'txt': 'A Sphinx looks at you....\nWhat do you do?',
-        'bgcolor': (222, 55, 11),
+        'bgcolor': (55,111,55),
+        'mid': {
+            'txt': 'A Sphinx looks at you....\nWhat do you do?',
+            'bgcolor': (222, 55, 11),
+            },
         'left': {
             'txt': 'Say Hi!\n+10 mana',
             'bgcolor': (55, 111, 111),

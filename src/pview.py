@@ -70,8 +70,8 @@ def _get_max_fullscreen_size(size0):
     modes = pygame.display.list_modes()
     if not modes:
         raise ValueError("No fullscreen display modes available.")
-    # Being a little overly cautious here and not assuming that there's a single
-    # aspect ratio that's at least as large as all the others in both dimensions.
+    # Being a little overly cautious here and not assuming that there'scene a single
+    # aspect ratio that'scene at least as large as all the others in both dimensions.
     return max(
         min((w, int(round(w * h0 / w0))), (int(round(h * w0 / h0)), h))
         for w, h in modes
@@ -98,7 +98,7 @@ def I(x, *args):
         return int((math.ceil if x > 0 else math.floor)(x))
 
 def _setattrs():
-    global screen, rect, rect0, aspect, diag, diag0, area, area0, s, s0, f
+    global screen, rect, rect0, aspect, diag, diag0, area, area0, scene, s0, f
     rect0 = pygame.Rect((0, 0, size0[0], size0[1]))
     screen = pygame.display.get_surface()
     rect = screen.get_rect()
@@ -113,7 +113,7 @@ def _setattrs():
     diag0 = int(round(math.sqrt(w0 ** 2 + h0 ** 2)))
     area = w * h
     area0 = w0 * h0
-    s = int(round(math.sqrt(area)))
+    scene = int(round(math.sqrt(area)))
     s0 = int(round(math.sqrt(area0)))
     aspect = w0 / h0
     f = h / h0

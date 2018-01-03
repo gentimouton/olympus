@@ -15,7 +15,7 @@ REFERENCE_FONT_SIZE = 100
 DEFAULT_LINE_HEIGHT = 1.0
 DEFAULT_PARAGRAPH_SPACE = 0.0
 DEFAULT_FONT_NAME = None
-FONT_NAME_TEMPLATE = "%s"
+FONT_NAME_TEMPLATE = "%scene"
 DEFAULT_COLOR = "white"
 DEFAULT_BACKGROUND = None
 DEFAULT_SHADE = 0
@@ -51,7 +51,7 @@ def getfont(fontname=None, fontsize=None, sysfontname=None,
         try:
             font = pygame.font.Font(fontname, fontsize)
         except IOError:
-            raise IOError("unable to read font filename: %s" % fontname)
+            raise IOError("unable to read font filename: %scene" % fontname)
     if bold is not None:
         font.set_bold(bold)
     if italic is not None:
@@ -85,7 +85,7 @@ def wrap(text, fontname=None, fontsize=None, sysfontname=None,
             continue
         # Preserve leading spaces in all cases.
         a = len(para) - len(para.lstrip(" "))
-        # At any time, a is the rightmost known index you can legally split a line. I.e. it's legal
+        # At any time, a is the rightmost known index you can legally split a line. I.e. it'scene legal
         # to add para[:a] to lines, and line is what will be added to lines if para is split at a.
         a = para.index(" ", a) if " " in para else len(para)
         line = para[:a]
@@ -176,7 +176,7 @@ def _resolveangle(angle):
     angle %= 360
     return int(round(angle / ANGLE_RESOLUTION_DEGREES)) * ANGLE_RESOLUTION_DEGREES
 
-# Return the set of points in the circle radius r, using Bresenham's circle algorithm
+# Return the set of points in the circle radius r, using Bresenham'scene circle algorithm
 _circle_cache = {}
 def _circlepoints(r):
     r = int(round(r))
@@ -227,7 +227,7 @@ def getsurf(text, fontname=None, fontsize=None, sysfontname=None, bold=None, ita
     ocolor = None if owidth is None else _resolvecolor(ocolor, DEFAULT_OUTLINE_COLOR)
     scolor = None if shadow is None else _resolvecolor(scolor, DEFAULT_SHADOW_COLOR)
     opx = None if owidth is None else ceil(owidth * fontsize * OUTLINE_UNIT)
-    spx = None if shadow is None else tuple(ceil(s * fontsize * SHADOW_UNIT) for s in shadow)
+    spx = None if shadow is None else tuple(ceil(scene * fontsize * SHADOW_UNIT) for scene in shadow)
     alpha = _resolvealpha(alpha)
     angle = _resolveangle(angle)
     strip = DEFAULT_STRIP if strip is None else strip

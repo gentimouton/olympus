@@ -4,9 +4,9 @@ from menu_scene import MenuScene
 from scene import SCN_MENU, SCN_GAME, SCN_QUIT, SCN_OVER
 from game_over_scene import GameOverScene
 
-scene_manager = None
+scene_manager = None # singleton
 
-class SceneManager():
+class _SceneManager():
     def __init__(self, scenes, first_scene_id):
         self.scenes = scenes
         self.cur_scene = self.scenes[first_scene_id]
@@ -22,17 +22,13 @@ class SceneManager():
             self.cur_scene.resume(**kwargs)
         return OUT_NONE
     
-    def redraw(self):
-        """ controls switched to full screen, so redraw scene from scratch """
-        self.cur_scene.redraw()
-
+    
 def init():
-    """ needed because Scenes need pygame to be initialized 
-    before they are created """
+    """ Scenes need pygame to be initialized (in main) before their creation. """
     global scene_manager
     scenes = { 
         SCN_MENU: MenuScene(), 
         SCN_GAME: GameScene(),
         SCN_OVER: GameOverScene() 
         }
-    scene_manager = SceneManager(scenes, SCN_MENU)
+    scene_manager = _SceneManager(scenes, SCN_MENU)
