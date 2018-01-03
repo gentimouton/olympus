@@ -1,10 +1,10 @@
 from collections import deque
 
 
-# encounter_gfx kinds
+# encounter_render kinds
 ENC_DFLT = 'default'
 
-# encounter_gfx effects 
+# encounter_render effects 
 def _mana_increase(x):
     def f(state):
         state.increase_mana(x)
@@ -15,7 +15,7 @@ def _add_encounter(kind=ENC_DFLT, n=1):
             state.append_encounter(kind)
     return f
 
-# encounter_gfx data
+# encounter_render data
 encounter_data = {
     ENC_DFLT: {
         'bgcolor': (55,111,55),
@@ -51,7 +51,7 @@ class GameModel():
         self.next_enc()
         
     def next_enc(self):
-        """ pop the next encounter_gfx """
+        """ pop the next encounter_render """
         try:
             self.cur_enc = self.encounters.popleft()
         except IndexError:  # empty: add 2 default ones
@@ -62,7 +62,7 @@ class GameModel():
     def game_lost(self):
         self.game_status = GST_LOST
     
-    # encounter_gfx effects exposed    
+    # encounter_render effects exposed    
     def append_encounter(self, enc_kind):
         self.encounters.append(enc_kind)
     def increase_mana(self, x):

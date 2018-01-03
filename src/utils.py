@@ -26,8 +26,11 @@ class Shape():
         self.color = color
 
 class NeatSprite(pg.sprite.DirtySprite):
-    """ Responsive Sprite: automatically scales to screen resolution, 
-    provided its `update` method is called.
+    """ Neat = Responsive + bunch of utilities in it (eg draw text and shapes).
+    Responsive as in: automatically scales to screen resolution, 
+    provided its `update` method is called. Uses a recompute flag 
+    like the dirty flag of pygame's DirtySprite.
+    
     """
     def __init__(self, rect0, color=TRANSPARENT, shapes=[], layer=1,
                  txt=None, fontsize=12, txt_positioning='topleft',
@@ -119,12 +122,13 @@ class NeatSprite(pg.sprite.DirtySprite):
     def set_txt(self, txt):
         if txt != self._txt:
             self._txt = txt
-            self._recompute()
+            self.recompute = 1
     
     def set_shapes(self, shapes):
         self.shapes = shapes
-        self._recompute()
+        self.recompute = 1
         
     def update(self, *args, **kwargs):
+        """ Recompute sprite if marked as such or if resolution changed. """
         if self.recompute or pview.size != self._res:
             self._recompute()

@@ -7,8 +7,7 @@ from scene import Scene, SCN_GAME, SCN_QUIT
 from constants import CMD_NEWG, CMD_RESM
 
 class MenuScene(Scene):
-    """ Main menu.
-    Display New Game and Quit.
+    """ Main menu. Display New Game and Quit.
     When a game has been started and is not over, enable Resume.
     """
     
@@ -19,6 +18,7 @@ class MenuScene(Scene):
             ('Quit', SCN_QUIT, {})
             ]
         
+        
     def tick(self, ms):
         if controller.btn_event('select'):
             c = self._choices[self._choice]
@@ -27,8 +27,15 @@ class MenuScene(Scene):
             self._choice = (self._choice + 1) % len(self._choices)
         elif controller.btn_event('up'):
             self._choice = (self._choice - 1) % len(self._choices)
-        self._draw()
-        return None, {}
+        # draw the whole screen
+        pview.fill('black')
+        for i, choice in enumerate(self._choices):
+            ptext.draw(choice[0], T(200, 200 + i * 100), fontsize=T(70))
+        ptext.draw('>', T(150, 200 + self._choice * 100), fontsize=T(70))
+        ptext.draw('F11: toggle fullscreen\nEsc: quit', T(10, 10), fontsize=T(20))
+        pg.display.flip()
+        return None, {} # no next scene to return
+
 
     def resume(self, **kwargs):
         """ called by scene manager from the game scene, passing kwargs. """
@@ -45,16 +52,7 @@ class MenuScene(Scene):
                 ('Quit', SCN_QUIT, {})
                 ]
             
-#     def redraw(self):
-#         pass  # no need to do anything until using dirty sprites
-    
-    def _draw(self):
-        pview.fill('black')
-        for i, choice in enumerate(self._choices):
-            ptext.draw(choice[0], T(200, 200 + i * 100), fontsize=T(70))
-        ptext.draw('>', T(150, 200 + self._choice * 100), fontsize=T(70))
-        ptext.draw('F11: toggle fullscreen\nEsc: quit', T(10, 10), fontsize=T(20))
-        pg.display.flip()
+            
         
 
 if __name__ == "__main__":

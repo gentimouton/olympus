@@ -11,21 +11,19 @@ class EncounterRenderer():
         rect0: area of the screen (in base resolution) to render encounters. 
         """
         self._res = pview.size  # memorize current resolution
-        self.stale = 0  # set to 1 by GameScene if game state changed
         self.state = state
         self.rect0 = pg.Rect(rect0)  # pg.Rect(pg.Rect(tuple)) == pg.Rect(tuple)
-        self.draw()
+        self.stale = 1  # also set to 1 by GameScene if game state changed
         
     
     def draw(self):
-        """ Draw all elements of an encounter: 
-        background, problem, and 2 choices.  
-        """
+        """ Draw all elements of encounter: bg, problem, and 2 choices. """
         data = encounter_data[self.state.cur_enc]
         self.bg = pg.Surface(T(self.rect0.size))
         self.bg.fill(data['bgcolor'])
         x0, y0 = self.rect0.topleft
         pview.screen.blit(self.bg, T(x0, y0))
+        pg.display.update(T(self.rect0))
         self.mid_card = Card((x0 + 300, y0 + 50, 200, 300),
                              data['mid']['bgcolor'],
                              data['mid']['txt'])
@@ -42,7 +40,7 @@ class EncounterRenderer():
         
     
     def tick(self, ms):
-        if self._res != pview.size or self.stale == 1:  # changed res or stale
+        if self._res != pview.size or self.stale:  # resolution or state changed
             self.draw()  # (re)create sprites, set them to recompute
         self.sprites.update()  # (re)compute sprites, set them to dirty
         dirty_rects = self.sprites.draw(pview.screen)  # blit dirty sprites
@@ -78,7 +76,7 @@ if __name__ == "__main__":
         def __init__(self):
             self.cur_enc = ENC_DFLT
     state = DummyState()
-    enc = EncounterRenderer(state, (0, 100, 800, 600))
+    enc = EncounterRenderer(state, (0, 100, 800, 500))
     # loop
     done = False
     while not done:
