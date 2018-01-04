@@ -14,7 +14,6 @@ from hud import Hud
 import pygame as pg
 from scene import SCN_MENU, Scene, SCN_OVER
 import settings
-from utils import NeatSprite
 
 
 random.seed(1)
@@ -25,24 +24,16 @@ class GameScene(Scene):
         # load images and sounds from disk here
         self._build_new_game()
         
-    def _build_new_game(self):
-        self.model = GameModel()
-        self.sprites = pg.sprite.LayeredDirty()
-        self.enc = EncounterRenderer(self.model, (0, 100, 800, 500))
-        self.hud = Hud(self.model, (0, 0, 800, 100))
-
     def tick(self, ms):
         # process player inputs
         if controller.btn_event('select'):
             return SCN_MENU, {'can_resume':1}  # add "Resume Game" to menu scene
         if controller.btn_event('left'):
             self.model.choose('left')
-            self.enc.stale = 1  # model changed: tell renderers to redraw
-            self.hud.stale = 1
+            self._set_renderers_stale()
         if controller.btn_event('right'):
             self.model.choose('right')
-            self.enc.stale = 1
-            self.hud.stale = 1
+            self._set_renderers_stale()
         if self.model.game_status == GST_LOST:
             return SCN_OVER, {'enc_seen': self.model.encounters_seen}
         # tick renderers
@@ -50,16 +41,23 @@ class GameScene(Scene):
         self.hud.tick(ms)
         return None, {}
 
-
     def resume(self, **kwargs):
         """ Scene callback. Called from the menu scene via scene manager. """
         if kwargs['cmd'] == CMD_NEWG:
             self._build_new_game()
         elif kwargs['cmd'] == CMD_RESM:
             pass
-        self.enc.stale = 1
+        self._set_renderers_stale()
+
+    def _build_new_game(self):
+        self.model = GameModel()
+        self.sprites = pg.sprite.LayeredDirty()
+        self.enc = EncounterRenderer(self.model, (0, 100, 800, 500))
+        self.hud = Hud(self.model, (0, 0, 800, 100))
+
+    def _set_renderers_stale(self): # model changed: tell renderers to redraw
+        self.enc.stale = 1  
         self.hud.stale = 1
-        
         
         
 if __name__ == "__main__":

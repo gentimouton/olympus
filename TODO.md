@@ -5,7 +5,11 @@ Mechanics ideas
 (prioritized)
 
 - mana/fame: 0-10k. Split logarithmically from ignored to known, honored, reverred, and exalted.
-- win = reach exalted, lose = reach ignored. 
+- win = reach exalted, lose = reach ignored.
+- nature cards: animals, weather, terraform
+- society cards: kings, births, inspiration, festivals
+- gods cards: beauty contest, create race (eg cyclops)
+- heroes cards: tasks like 12 labors   
 - alignment: DND, good vs evil (white vs black), lawful vs chaotic (blue vs red)
 - events have 2+ choices; only top 2 closest to alignment are proposed. 
 - years progression. Each year has a FIFO of events.

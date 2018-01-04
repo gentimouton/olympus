@@ -13,13 +13,13 @@ class Hud(): # TODO: HUD and EncounterRenderer should inherit from Renderer
         self._res = pview.size  # memorize current resolution
         self.state = state
         self.rect0 = pg.Rect(rect0)  # pg.Rect(pg.Rect(tuple)) == pg.Rect(tuple)
+        self.stale = 1  # also set to 1 by GameScene if game state changed
         # build widgets
         gauge = Gauge(lambda: self.state.mana,  # tell widget how to fetch data
                       lambda: self.state.mana_max,
                       (100, 5, 20, 70))
         icon = ManaIcon((100 + 2, 80, 16, 16))
-        self.sprites = pg.sprite.LayeredDirty([gauge, icon])      
-        self.stale = 1  # also set to 1 by GameScene if game state changed
+        self.sprites = pg.sprite.LayeredDirty([gauge, icon])
         
         
     def draw(self):
