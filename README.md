@@ -27,3 +27,4 @@ Each god has 1 or more functions.
 
 ### See also
 * [greek gods chart](https://ludios.org/greekgods/greek-tree-full.png)
+* alignments: good vs bad is obvious. Another is [cultural cognition](https://www.quora.com/If-cultures-can-differ-in-terms-of-hierarchy-egalitarianism-and-individualism-collectivism-what-are-good-examples-of-cultures-each-having-one-of-these-unique-combinations): egalitarian vs hierarchical, and communitarian vs individualist.
